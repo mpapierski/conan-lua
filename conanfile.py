@@ -2,6 +2,7 @@ from conans import ConanFile
 import os
 from conans.tools import download
 from conans.tools import unzip
+from conans.tools import replace_in_file
 from conans import CMake
 
 class luaConan(ConanFile):
@@ -14,12 +15,21 @@ class luaConan(ConanFile):
     exports="FindLua.cmake"
     unzipped_name = "lua-%s" % version
     zip_name = "%s.tar.gz" % unzipped_name
+    requires = "readline/7.0@bincrafters/stable"
 
     def source(self):
         url = "https://www.lua.org/ftp/%s" % self.zip_name
         download(url, self.zip_name)
         unzip(self.zip_name)
         os.unlink(self.zip_name)
+        readline = '-I {} -L {}'.format(self.deps_cpp_info['readline'].include_paths[0],
+                                        self.deps_cpp_info['readline'].lib_paths[0])
+        replace_in_file(os.path.join(self.unzipped_name, 'src', 'Makefile'),
+                'MYCFLAGS=',
+                'MYCFLAGS={}'.format(readline))
+        replace_in_file(os.path.join(self.unzipped_name, 'src', 'Makefile'),
+                'SYSLIBS="-Wl,-E -ldl -lreadline"',
+                'SYSLIBS="-Wl,-E {} -ldl -lreadline -lncurses"'.format(readline))
 
     def build(self):
         self.target = {
@@ -32,7 +42,7 @@ class luaConan(ConanFile):
 
     def package(self):
         self.copy("FindLua.cmake", ".", ".")
-        
+
         # Headers
         self.copy(pattern="*.h", dst="include", src="%s/install/include" % self.unzipped_name, keep_path=True)
         self.copy(pattern="*.hpp", dst="include", src="%s/install/include" % self.unzipped_name, keep_path=True)
