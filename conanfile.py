@@ -6,7 +6,7 @@ from conans import CMake
 
 class luaConan(ConanFile):
     name = "lua"
-    version = "5.3.3"
+    version = "5.3.5"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     url="http://github.com/dwerner/conan-lua"
