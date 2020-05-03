@@ -10,7 +10,7 @@ class luaConan(ConanFile):
     version = "5.3.5"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
-    url="http://github.com/dwerner/conan-lua"
+    url="http://github.com/mpapierski/conan-lua"
     license="https://www.lua.org/license.html"
     exports="FindLua.cmake"
     unzipped_name = "lua-%s" % version
