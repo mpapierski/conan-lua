@@ -16,6 +16,8 @@ class luaConan(ConanFile):
     unzipped_name = "lua-%s" % version
     zip_name = "%s.tar.gz" % unzipped_name
     requires = "readline/7.0@bincrafters/stable"
+    options = {"shared": [True, False]}
+    default_options = "shared=False"
 
     def source(self):
         url = "https://www.lua.org/ftp/%s" % self.zip_name
